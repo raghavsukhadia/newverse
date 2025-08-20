@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Issue Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+        }
+        .header {
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-weight: 700;
+        }
+        .header p {
+            color: #6c757d;
+        }
+        .search-bar {
+            margin-bottom: 2rem;
+        }
+        .nav-tabs .nav-link {
+            color: #6c757d;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            border-color: #dee2e6 #dee2e6 #fff;
+        }
+        .dashboard-cards .card {
+            border: none;
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .card.total-active { background-color: #6c757d; }
+        .card.new-complaint { background-color: #0d6efd; }
+        .card.under-inspection { background-color: #ffc107; }
+        .card.sent-to-service { background-color: #fd7e14; }
+        .card.received { background-color: #dc3545; }
+
+        .dashboard-cards .card-body {
+            padding: 1.5rem;
+        }
+        .dashboard-cards .card-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .dashboard-cards .card-text {
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+        .form-section, .active-requests-section {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        .form-section h3, .active-requests-section h3 {
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        .no-requests {
+            text-align: center;
+            padding: 2rem;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+        .record-audio-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .floating-actions {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .floating-actions .btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .service-request-card {
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .service-request-card .card-header {
+            background-color: #f8f9fa;
+            font-weight: 500;
+        }
+        .service-request-card .card-body {
+            padding: 1.5rem;
+        }
+        .service-request-card .status-updater {
+            padding: 0.5rem 1rem;
+            background-color: #f1f3f5;
+            border-top: 1px solid #dee2e6;
+        }
+        .service-request-card .card-actions {
+            padding: 0.5rem 1rem;
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .comments-section {
+            padding: 1rem;
+            background-color: #e9ecef;
+        }
+        .dashboard-cards .card.clickable-card {
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .dashboard-cards .card.clickable-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="header">
+            <h1>Service Issue Tracker</h1>
+            <p>Manage and track product service requests efficiently.</p>
+        </div>
+
+        <div class="search-bar">
+            <label for="searchInput" class="form-label">Search All Requests</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="searchInput" placeholder="Enter Customer Contact or Token #">
+                <button class="btn btn-outline-secondary" type="button">Clear</button>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard-content" type="button" role="tab" aria-controls="dashboard-content" aria-selected="true">Dashboard & Active</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed-content" type="button" role="tab" aria-controls="completed-content" aria-selected="false">Completed Installations</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="dashboard-content" role="tabpanel" aria-labelledby="dashboard-tab">
+                
+                <div class="dashboard my-4">
+                    <h3>Dashboard</h3>
+                    <div class="row dashboard-cards">
+                        <div class="col">
+                            <div class="card total-active clickable-card" data-status-filter="all">
+                                <div class="card-body">
+                                    <h5 class="card-title">0</h5>
+                                    <p class="card-text">Total Active</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card new-complaint clickable-card" data-status-filter="New Complaint">
+                                <div class="card-body">
+                                    <h5 class="card-title">0</h5>
+                                    <p class="card-text">New Complaint</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card under-inspection clickable-card" data-status-filter="Under Inspection">
+                                <div class="card-body">
+                                    <h5 class="card-title">0</h5>
+                                    <p class="card-text">Under Inspection</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card sent-to-service clickable-card" data-status-filter="Sent to Service Center">
+                                <div class="card-body">
+                                    <h5 class="card-title">0</h5>
+                                    <p class="card-text">Sent to Service Center</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card received clickable-card" data-status-filter="Received">
+                                <div class="card-body">
+                                    <h5 class="card-title">0</h5>
+                                    <p class="card-text">Received</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Create New Service Request</h3>
+                    <form id="request-form">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productName" class="form-label">Product Name / Model</label>
+                                <input type="text" class="form-control" id="productName">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="serialNumber" class="form-label">Serial Number</label>
+                                <input type="text" class="form-control" id="serialNumber">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="customerName" class="form-label">Customer Name</label>
+                                <input type="text" class="form-control" id="customerName">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="customerContact" class="form-label">Customer Contact (Phone/Email)</label>
+                                <input type="text" class="form-control" id="customerContact">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="issueDescription" class="form-label">Detailed description of the issue...</label>
+                            <textarea class="form-control" id="issueDescription" rows="4"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attachments" class="form-label">Attachments</label>
+                            <div class="d-flex align-items-center">
+                                <input class="form-control me-3" type="file" id="attachments">
+                                <button type="button" class="btn record-audio-btn"><i class="bi bi-mic-fill"></i> Record Audio</button>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </form>
+                </div>
+
+                <div class="active-requests-section">
+                    <h3>Active Service Requests</h3>
+                    <div id="requests-list">
+                        <!-- Service requests will be dynamically inserted here -->
+                    </div>
+                    <div id="no-requests" class="no-requests" style="display: none;">
+                        <p>No active service requests found.</p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="tab-pane fade" id="completed-content" role="tabpanel" aria-labelledby="completed-tab">
+                <div class="p-4">
+                    <h2>Completed Installations</h2>
+                    <div id="completed-requests-list">
+                        <!-- Completed requests will be shown here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="floating-actions">
+        <button class="btn btn-dark"><i class="bi bi-three-dots-vertical"></i></button>
+    </div>
+
+    <!-- Edit Request Modal -->
+    <div class="modal fade" id="editRequestModal" tabindex="-1" aria-labelledby="editRequestModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editRequestModalLabel">Edit Service Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-request-form">
+                        <input type="hidden" id="editRequestId">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editProductName" class="form-label">Product Name / Model</label>
+                                <input type="text" class="form-control" id="editProductName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editSerialNumber" class="form-label">Serial Number</label>
+                                <input type="text" class="form-control" id="editSerialNumber">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editCustomerName" class="form-label">Customer Name</label>
+                                <input type="text" class="form-control" id="editCustomerName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editCustomerContact" class="form-label">Customer Contact</label>
+                                <input type="text" class="form-control" id="editCustomerContact" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editIssueDescription" class="form-label">Detailed description of the issue</label>
+                            <textarea class="form-control" id="editIssueDescription" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="save-edit-btn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // --- Service Requests Frontend Integration (CLEAN) ---
+    document.addEventListener('DOMContentLoaded', function () {
+        const API_URL = 'http://localhost:3001/api/service_requests';
+
+        const form = document.getElementById('request-form');
+        const requestsList = document.getElementById('requests-list');
+        const noRequestsMessage = document.getElementById('no-requests');
+
+        // Fetch and display all service requests
+        async function fetchRequests() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Failed to fetch');
+                const requests = await response.json();
+                renderRequests(requests);
+            } catch (err) {
+                requestsList.innerHTML = '<div class="alert alert-danger">Failed to load service requests.</div>';
+            }
+        }
+
+        // Render requests in the list
+        function renderRequests(requests) {
+            requestsList.innerHTML = '';
+            if (!requests.length) {
+                noRequestsMessage.style.display = 'block';
+                return;
+            }
+            noRequestsMessage.style.display = 'none';
+            requests.forEach(req => {
+                const div = document.createElement('div');
+                div.className = 'service-request-card';
+                div.innerHTML = `
+                    <div class="card-header">
+                        <strong>${req.product_name}</strong> (S/N: ${req.serial_number || 'N/A'})
+                        <small class="text-muted float-end">Created: ${new Date(req.created_at).toLocaleString()}</small>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1"><strong>Customer:</strong> ${req.customer_name} (${req.customer_contact})</p>
+                        <p class="mb-0"><strong>Issue:</strong> ${req.issue_description}</p>
+                    </div>
+                    <div class="card-actions">
+                        <span class="badge bg-primary">${req.status}</span>
+                    </div>
+                `;
+                requestsList.appendChild(div);
+            });
+        }
+
+        // Handle form submission
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const product_name = document.getElementById('productName').value;
+                const serial_number = document.getElementById('serialNumber').value;
+                const customer_name = document.getElementById('customerName').value;
+                const customer_contact = document.getElementById('customerContact').value;
+                const issue_description = document.getElementById('issueDescription').value;
+                const status = 'New Complaint';
+                if (!product_name || !customer_name || !issue_description) {
+                    alert('Please fill out Product Name, Customer Name, and Issue Description.');
+                    return;
+                }
+                const body = { product_name, serial_number, customer_name, customer_contact, issue_description, status };
+                try {
+                    const res = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    if (res.ok) {
+                        alert('Service request added!');
+                        form.reset();
+                        fetchRequests();
+                    } else {
+                        alert('Error adding request');
+                    }
+                } catch (err) {
+                    alert('Network error');
+                }
+            });
+        }
+
+        // Initial load
+        fetchRequests();
+    });
+    </script>
+</body>
+</html>

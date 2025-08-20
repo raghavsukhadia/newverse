@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All in Tracker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 800px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #1e3c72;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+            border-radius: 2px;
+        }
+
+        .cards-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 220px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: #1e3c72;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .button:hover {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            transform: scale(1.05);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            color: #1e3c72;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        .card-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>All in Tracker</h1>
+        <div class="cards-container">
+            <div class="card">
+                <div class="icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h3 class="card-title">Call Follow Up</h3>
+                <p class="card-description">Track and manage customer call follow-ups efficiently</p>
+                <a href="callfollowup.html" class="button">Access</a>
+            </div>
+            
+            <div class="card">
+                <div class="icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3 class="card-title">Customer Request</h3>
+                <p class="card-description">Handle and monitor customer requests and inquiries</p>
+                <a href="customerreq (14).html" class="button">Access</a>
+            </div>
+            
+            <div class="card">
+                <div class="icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <h3 class="card-title">Service Issues</h3>
+                <p class="card-description">Track and resolve service-related issues and tickets</p>
+                <a href="serviceissuetracker.html" class="button">Access</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
